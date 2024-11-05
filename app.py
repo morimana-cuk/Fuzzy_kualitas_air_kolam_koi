@@ -24,7 +24,7 @@ def kualitas_air():
     cursor = db.cursor()
     
     # Memasukkan data ke tabel kualitas_air
-    sql = "INSERT INTO kualitas_air (ph, suhu, id_alat, label, created_at) VALUES (%s, %s, %s, %s, %s, %s)"
+    sql = "INSERT INTO kualitas_air (ph, suhu, id_alat, label, created_at) VALUES (%s, %s, %s, %s, %s)"
     cursor.execute(sql, (ph, suhu, id_alat, kualitas, timestamp))
     
     # Commit perubahan

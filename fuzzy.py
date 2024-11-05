@@ -21,21 +21,39 @@ def hitung_kualitas_air(ph_input, suhu_input):
     ph['basa'] = fuzz.trimf(ph.universe, [8.0, 15.0, 30.0])
 
     # membership function suhu
+    suhu['poor1'] = fuzz.trapmf(suhu.universe, [0.0, 10.0, 15.0, 18.0])
     suhu['optimal'] = fuzz.trapmf(suhu.universe, [18.0, 22.0, 25.0, 28.0])
-    suhu['very_poor'] = fuzz.trapmf(suhu.universe, [0.0, 10.0, 28.0, 40.0])
+    suhu['poor2'] = fuzz.trapmf(suhu.universe, [28.0, 35.0, 40.0, 50.0])
 
     # membership function kualitas
     kualitas_air['bagus'] = fuzz.trimf(kualitas_air.universe, [0, 0, 0.5])
     kualitas_air['buruk'] = fuzz.trimf(kualitas_air.universe, [0.5, 1, 1])
 
-    # aturan fuzzy
+   # Definisi aturan fuzzy
     rules = [
-        ctrl.Rule(ph['netral'] & suhu['optimal'], kualitas_air['bagus']),
-        ctrl.Rule(ph['netral'] & suhu['very_poor'], kualitas_air['buruk']),
+        ctrl.Rule(ph['asam'] & suhu['poor1'], kualitas_air['buruk']),
         ctrl.Rule(ph['asam'] & suhu['optimal'], kualitas_air['buruk']),
-        ctrl.Rule(ph['asam'] & suhu['very_poor'], kualitas_air['buruk']),
+        ctrl.Rule(ph['asam'] & suhu['poor2'], kualitas_air['buruk']),
+        
+        ctrl.Rule(ph['netral'] & suhu['poor1'], kualitas_air['buruk']),
+        ctrl.Rule(ph['netral'] & suhu['optimal'], kualitas_air['bagus']),
+        ctrl.Rule(ph['netral'] & suhu['poor2'], kualitas_air['buruk']),
+
+        ctrl.Rule(ph['basa'] & suhu['poor1'], kualitas_air['buruk']),
         ctrl.Rule(ph['basa'] & suhu['optimal'], kualitas_air['buruk']),
-        ctrl.Rule(ph['basa'] & suhu['very_poor'], kualitas_air['buruk']),
+        ctrl.Rule(ph['basa'] & suhu['poor2'], kualitas_air['buruk']),
+       
+       ctrl.Rule(suhu['poor1'] & ph['asam'], kualitas_air['buruk']),
+       ctrl.Rule(suhu['poor1'] & ph['netral'], kualitas_air['buruk']),
+       ctrl.Rule(suhu['poor1'] & ph['basa'], kualitas_air['buruk']),
+
+       ctrl.Rule(suhu['optimal'] & ph['asam'], kualitas_air['buruk']),
+       ctrl.Rule(suhu['optimal'] & ph['netral'], kualitas_air['bagus']),
+       ctrl.Rule(suhu['optimal'] & ph['basa'], kualitas_air['buruk']),
+
+       ctrl.Rule(suhu['poor2'] & ph['asam'], kualitas_air['buruk']),
+       ctrl.Rule(suhu['poor2'] & ph['netral'], kualitas_air['buruk']),
+       ctrl.Rule(suhu['poor2'] & ph['basa'], kualitas_air['buruk']),
     ]
 
     kualitas_ctrl = ctrl.ControlSystem(rules)
